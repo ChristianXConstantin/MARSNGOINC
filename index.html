@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#0b38c9" />
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
+  <title>Social Network Home Page</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      /* Vibrant red, white & blue palette — --yellow is the red accent token
+         (kept from the older palette), and --blue-* are the blue tokens. */
+      --sky: #e8f0ff;
+      --sky-strong: #4d8dff;
+      --blue: #0f5bff;
+      --blue-deep: #0b38c9;
+      --yellow: #ff1f3d;
+      --yellow-soft: #ffe4e9;
+      --ink: #0b1a40;
+      --muted: #4c6191;
+      --paper: #ffffff;
+      --surface: #ffffff;
+      --line: #c8d8fb;
+      --shadow: 0 22px 70px rgba(15, 91, 255, .16);
+      --avatar-a: #ffc7d1;
+      --avatar-b: #bdd6ff;
+      --avatar-c: #ff6478;
+      --avatar-d: #5f9bff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --sky: #0a1530;
+        --sky-strong: #4d8dff;
+        --blue: #6ba3ff;
+        --blue-deep: #dcebff;
+        --yellow: #ff5468;
+        --yellow-soft: #471520;
+        --ink: #f3f7ff;
+        --muted: #a6bce6;
+        --paper: #060d22;
+        --surface: #0c1838;
+        --line: #23408a;
+        --shadow: 0 22px 70px rgba(0, 0, 0, .36);
+        --avatar-a: #c94f66;
+        --avatar-b: #2f6fe0;
+        --avatar-c: #ff5468;
+        --avatar-d: #4d8dff;
+      }
+      .avatar, .orbit-avatar { color: #f3f7ff; }
+      .hero { background: #0b38c9; }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+    button, a { font: inherit; }
+    a { color: inherit; }
+    button { color: inherit; }
+    svg { display: block; }
+    .skip {
+      position: absolute;
+      left: 1rem;
+      top: -5rem;
+      background: var(--ink);
+      color: var(--paper);
+      padding: .7rem 1rem;
+      border-radius: 8px;
+      z-index: 20;
+    }
+    .skip:focus { top: 1rem; }
+    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .site-nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 30px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .94rem;
+      font-weight: 600;
+    }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--blue); }
+    .nav-mark {
+      width: 42px;
+      height: 30px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    .nav-mark span { position: absolute; border-radius: 50%; }
+    .nav-mark span:nth-child(1) { width: 22px; height: 22px; left: 0; top: 0; background: var(--blue); }
+    .nav-mark span:nth-child(2) { width: 20px; height: 20px; right: 0; bottom: 0; background: var(--yellow); }
+    .nav-mark span:nth-child(3) { width: 10px; height: 10px; left: 17px; top: 15px; background: var(--surface); border: 2px solid var(--ink); }
+    .nav-cta, .primary, .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 0;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .nav-cta {
+      border: 1px solid var(--line);
+      padding: .66rem 1rem;
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: 0 4px 0 var(--line);
+    }
+    .hero {
+      position: relative;
+      isolation: isolate;
+      background: var(--blue-deep);
+      color: #f3f7ff;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      right: -170px;
+      top: -230px;
+      border: 76px solid color-mix(in srgb, var(--yellow) 72%, transparent);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    /* Light header copy on the deep-blue hero. */
+    .hero .nav-links a:not(.nav-cta) { color: #dcebff; }
+    .hero .nav-links a:not(.nav-cta):hover,
+    .hero .nav-links a:not(.nav-cta):focus-visible { color: #ffffff; }
+    .hero .eyebrow { color: #dcebff; }
+    .hero h1 { color: #ffffff; }
+    .hero .lead { color: #c9d8f5; }
+    .hero .primary {
+      background: #ffffff;
+      color: #0b38c9;
+      box-shadow: 0 6px 0 color-mix(in srgb, #0b38c9 45%, black);
+    }
+    .hero .primary:hover { box-shadow: 0 4px 0 color-mix(in srgb, #0b38c9 45%, black); }
+    .hero .secondary { color: #dcebff; }
+    .hero .nav-mark span:nth-child(1) { background: #ffffff; }
+    .hero .nav-cta { color: var(--ink); }
+    .hero .feed-card { color: var(--ink); }
+    .hero-grid {
+      min-height: 665px;
+      display: grid;
+      grid-template-columns: .94fr 1.06fr;
+      align-items: center;
+      gap: 64px;
+      padding: 64px 0 90px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: .84rem;
+      font-weight: 700;
+      color: var(--blue-deep);
+      margin: 0 0 18px;
+    }
+    .eyebrow::before { content: ""; width: 30px; height: 4px; border-radius: 8px; background: var(--yellow); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      font-family: "Newsreader", serif;
+      font-size: clamp(3.15rem, 6.3vw, 5.7rem);
+      line-height: .94;
+      letter-spacing: -.05em;
+      max-width: 650px;
+      margin-bottom: 24px;
+    }
+    h1 .underline { position: relative; display: inline-block; }
+    h1 .underline::after {
+      content: "";
+      position: absolute;
+      left: 1%; right: 0; bottom: .01em;
+      height: .13em;
+      background: var(--yellow);
+      border-radius: 999px;
+      z-index: -1;
+      transform: rotate(-1deg);
+    }
+    .lead { font-size: 1.15rem; max-width: 560px; color: var(--muted); margin-bottom: 30px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .primary {
+      background: var(--blue-deep);
+      color: var(--paper);
+      padding: .92rem 1.25rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 0 color-mix(in srgb, var(--blue-deep) 45%, black);
+    }
+    .primary:hover { transform: translateY(2px); box-shadow: 0 4px 0 color-mix(in srgb, var(--blue-deep) 45%, black); }
+    .secondary { padding: .9rem 1.1rem; color: var(--blue-deep); }
+    .secondary svg { transition: transform .2s ease; }
+    .secondary:hover svg { transform: translateX(4px); }
+    .network-scene {
+      min-height: 490px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    .feed-card {
+      width: min(100%, 435px);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 26px 26px 10px 26px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      transform: rotate(1.5deg);
+      position: relative;
+      z-index: 2;
+    }
+    .feed-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .person { display: flex; align-items: center; gap: 11px; }
+    .avatar {
+      width: 45px; height: 45px; border-radius: 50%; background: var(--avatar-a);
+      display: grid; place-items: center; font-weight: 800; color: #0b1a40;
+      border: 3px solid var(--surface); outline: 1px solid var(--line);
+    }
+    .person strong { display: block; line-height: 1.2; }
+    .person small { color: var(--muted); }
+    .more { letter-spacing: .14em; color: var(--muted); font-weight: 700; }
+    .feed-copy { margin: 22px 0 18px; font-size: 1.06rem; }
+    .photo-illustration {
+      height: 204px;
+      border-radius: 15px;
+      background: var(--sky);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: relative;
+    }
+    .hill { position: absolute; bottom: -40px; border-radius: 50% 50% 0 0; }
+    .hill.one { width: 360px; height: 150px; left: -60px; background: #6aa6ff; transform: rotate(7deg); }
+    .hill.two { width: 330px; height: 130px; right: -100px; background: #2f7bff; transform: rotate(-8deg); }
+    .sun { position: absolute; width: 72px; height: 72px; border-radius: 50%; background: var(--yellow); top: 28px; right: 40px; }
+    .people { position: absolute; left: 74px; bottom: 44px; display: flex; align-items: end; gap: 2px; }
+    .mini-person { width: 42px; height: 82px; position: relative; }
+    .mini-person::before { content: ""; position: absolute; width: 27px; height: 27px; border-radius: 50%; left: 8px; top: 0; background: #7b4d38; }
+    .mini-person::after { content: ""; position: absolute; width: 38px; height: 51px; border-radius: 18px 18px 7px 7px; bottom: 0; left: 2px; background: var(--yellow); }
+    .mini-person:nth-child(2)::before { background: #d18f65; }
+    .mini-person:nth-child(2)::after { background: var(--blue); }
+    .mini-person:nth-child(3)::before { background: #5d372d; }
+    .mini-person:nth-child(3)::after { background: #ff7586; }
+    .feed-actions { margin-top: 17px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: .87rem; }
+    .reaction-row { display: flex; gap: 18px; }
+    .reaction { display: flex; align-items: center; gap: 6px; }
+    .floating-note {
+      position: absolute;
+      background: var(--yellow);
+      color: #ffffff;
+      padding: 14px 18px;
+      font-weight: 700;
+      border-radius: 8px 18px 18px 18px;
+      box-shadow: 0 12px 30px rgba(230, 20, 50, .32);
+      z-index: 3;
+    }
+    .note-a { top: 35px; right: 4px; transform: rotate(-4deg); }
+    .note-b { bottom: 22px; left: -8px; background: var(--sky-strong); color: #08265e; box-shadow: 0 12px 30px rgba(15, 91, 255, .28); transform: rotate(3deg); }
+    .orbit-avatar { position: absolute; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 5px solid var(--surface); box-shadow: 0 10px 30px rgba(15, 91, 255, .22); font-weight: 800; color: #0b1a40; }
+    .orb-one { left: 10px; top: 105px; background: var(--avatar-c); transform: rotate(-7deg); }
+    .orb-two { right: 14px; bottom: 100px; background: var(--avatar-d); transform: rotate(6deg); }
+    .intro { padding: 92px 0 66px; }
+    .intro-row { display: grid; grid-template-columns: .65fr 1.35fr; gap: 72px; align-items: start; }
+    .section-index { color: var(--blue); font-weight: 800; font-size: .9rem; }
+    h2 { font-family: "Newsreader", serif; font-size: clamp(2.35rem, 4.4vw, 4.15rem); line-height: 1.03; letter-spacing: -.035em; margin-bottom: 22px; }
+    .intro-copy { font-size: 1.14rem; color: var(--muted); max-width: 760px; }
+    .principles { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; padding-bottom: 104px; }
+    .principle {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      padding: 28px;
+      min-height: 245px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .principle:nth-child(1) { grid-column: span 5; border-radius: 8px 30px 8px 8px; }
+    .principle:nth-child(2) { grid-column: span 3; border-radius: 8px; background: var(--yellow-soft); }
+    .principle:nth-child(3) { grid-column: span 4; border-radius: 30px 8px 8px 8px; }
+    .principle svg { color: var(--blue); }
+    .principle h3 { font-size: 1.28rem; margin-bottom: 8px; }
+    .principle p { color: var(--muted); margin: 0; }
+    .experience { background: var(--blue-deep); color: var(--paper); padding: 98px 0; position: relative; overflow: hidden; }
+    .experience::after { content: ""; position: absolute; width: 270px; height: 270px; border: 44px solid var(--yellow); border-radius: 50%; right: -140px; bottom: -140px; opacity: .9; }
+    .experience-grid { display: grid; grid-template-columns: .86fr 1.14fr; gap: 74px; align-items: center; position: relative; z-index: 1; }
+    .experience .section-index, .experience p { color: color-mix(in srgb, var(--paper) 78%, transparent); }
+    .steps { display: grid; }
+    .step { display: grid; grid-template-columns: 46px 1fr; gap: 18px; padding: 24px 0; border-bottom: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); }
+    .step:first-child { padding-top: 0; }
+    .step:last-child { border-bottom: 0; padding-bottom: 0; }
+    .step-number { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--yellow); color: #ffffff; font-weight: 800; }
+    .step h3 { margin: 0 0 6px; font-size: 1.18rem; }
+    .step p { margin: 0; }
+    .topic-board {
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 34px 12px 34px 12px;
+      padding: 30px;
+      min-height: 420px;
+      transform: rotate(-1deg);
+      box-shadow: 0 24px 60px rgba(0,0,0,.22);
+    }
+    .topic-head { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 24px; }
+    .topic-head h3 { margin: 0; font-size: 1.3rem; }
+    .pulse { display: flex; gap: 5px; }
+    .pulse span { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+    .topic-list { display: grid; gap: 12px; }
+    .topic { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 13px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+    .topic:nth-child(2) { margin-left: 28px; }
+    .topic:nth-child(3) { margin-right: 18px; }
+    .topic-badge { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 12px; background: var(--sky); color: var(--blue-deep); }
+    .topic:nth-child(2) .topic-badge { background: var(--yellow-soft); }
+    .topic strong { display: block; font-size: .97rem; }
+    .topic small { color: var(--muted); }
+    .topic-arrow { color: var(--blue); }
+    .final { padding: 110px 0 120px; }
+    .final-card { display: grid; grid-template-columns: 1.25fr .75fr; align-items: end; gap: 40px; background: var(--sky); border: 1px solid var(--line); border-radius: 46px 12px 46px 12px; padding: 56px; position: relative; overflow: hidden; }
+    .final-card::after { content: ""; width: 175px; height: 175px; border-radius: 50%; position: absolute; right: -60px; top: -78px; background: var(--yellow); }
+    .final h2 { margin-bottom: 12px; max-width: 700px; }
+    .final p { color: var(--muted); margin-bottom: 0; max-width: 580px; }
+    .final .primary { justify-self: end; position: relative; z-index: 1; }
+    footer { border-top: 1px solid var(--line); padding: 27px 0 36px; color: var(--muted); }
+    .footer-row { display: flex; justify-content: space-between; gap: 24px; align-items: center; font-size: .88rem; }
+    .footer-row a { text-decoration: none; font-weight: 700; color: var(--blue); }
+    :focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 38px; padding-top: 48px; }
+      .hero-copy { text-align: center; }
+      .hero-copy .lead { margin-inline: auto; }
+      .hero-actions { justify-content: center; }
+      .network-scene { min-height: 520px; }
+      .experience-grid { grid-template-columns: 1fr; }
+      .principle:nth-child(n) { grid-column: span 6; }
+      .principle:nth-child(3) { grid-column: 3 / span 8; }
+      .final-card { grid-template-columns: 1fr; align-items: start; }
+      .final .primary { justify-self: start; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 28px, 1160px); }
+      .site-nav { min-height: 66px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .nav-cta { font-size: .86rem; padding: .58rem .82rem; }
+      .hero-grid { min-height: auto; padding: 44px 0 68px; }
+      h1 { font-size: clamp(3rem, 15vw, 4.5rem); }
+      .lead { font-size: 1.02rem; }
+      .primary, .secondary { width: 100%; }
+      .network-scene { min-height: 455px; }
+      .feed-card { padding: 16px; border-radius: 20px 20px 8px 20px; }
+      .photo-illustration { height: 174px; }
+      .floating-note { font-size: .8rem; padding: 10px 12px; }
+      .note-a { top: 1px; right: -2px; }
+      .note-b { bottom: 0; left: -2px; }
+      .orbit-avatar { width: 50px; height: 50px; border-width: 4px; font-size: .85rem; }
+      .orb-one { left: -2px; top: 68px; }
+      .orb-two { right: -2px; bottom: 68px; }
+      .feed-copy { font-size: .96rem; margin: 17px 0 13px; }
+      .intro { padding: 72px 0 48px; }
+      .intro-row { grid-template-columns: 1fr; gap: 16px; }
+      h2 { font-size: 2.55rem; }
+      .principles { grid-template-columns: 1fr; padding-bottom: 78px; }
+      .principle:nth-child(n) { grid-column: 1; min-height: 210px; }
+      .experience { padding: 76px 0; }
+      .experience-grid { gap: 42px; }
+      .topic-board { padding: 20px 14px; min-height: auto; border-radius: 26px 8px 26px 8px; }
+      .topic:nth-child(n) { margin: 0; }
+      .topic { grid-template-columns: auto 1fr; }
+      .topic-arrow { display: none; }
+      .final { padding: 78px 0 84px; }
+      .final-card { padding: 34px 24px; border-radius: 30px 8px 30px 8px; }
+      .footer-row { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="hero">
+    <nav class="site-nav wrap" aria-label="Primary navigation">
+      <div class="nav-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="nav-links">
+        <a href="#principles">Principles</a>
+        <a href="#experience">Experience</a>
+        <a class="nav-cta" href="#concept">View the concept</a>
+      </div>
+    </nav>
+    <div class="hero-grid wrap" id="main">
+      <div class="hero-copy">
+        <p class="eyebrow">Built for real connection</p>
+        <h1>A kinder place to be yourself, <span class="underline">together.</span></h1>
+        <p class="lead">Follow the people you care about, discover conversations worth joining, and make a corner of the internet that feels like yours.</p>
+        <div class="hero-actions">
+          <a class="primary" href="#experience">Explore the experience
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="secondary" href="#principles">Why it feels different
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="network-scene" aria-label="Illustrated preview of a friendly community feed">
+        <div class="floating-note note-a">A little joy for your feed</div>
+        <div class="orbit-avatar orb-one" aria-hidden="true">AM</div>
+        <article class="feed-card">
+          <div class="feed-top">
+            <div class="person"><div class="avatar" aria-hidden="true">JP</div><div><strong>Weekend walkers</strong><small>Community circle</small></div></div>
+            <span class="more" aria-hidden="true">•••</span>
+          </div>
+          <p class="feed-copy">Clear skies, good company, and one very scenic shortcut.</p>
+          <div class="photo-illustration" role="img" aria-label="Three friends standing together in blue hills under a warm red sun">
+            <div class="sun"></div><div class="hill one"></div><div class="hill two"></div>
+            <div class="people"><div class="mini-person"></div><div class="mini-person"></div><div class="mini-person"></div></div>
+          </div>
+          <div class="feed-actions">
+            <div class="reaction-row"><span class="reaction"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 000-7.8z" stroke="currentColor" stroke-width="2"/></svg> 128</span><span class="reaction"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg> 24</span></div>
+            <span>See circle</span>
+          </div>
+        </article>
+        <div class="orbit-avatar orb-two" aria-hidden="true">SK</div>
+        <div class="floating-note note-b">You belong here.</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro wrap" id="principles">
+      <div class="intro-row">
+        <span class="section-index">01 / The idea</span>
+        <div>
+          <h2>Social should feel social again.</h2>
+          <p class="intro-copy">Less performance. More personality. The experience keeps the people and interests you choose close, while giving every conversation enough room to breathe.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles wrap" aria-label="Core principles">
+      <article class="principle">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM17 11l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><h3>Your people, within reach</h3><p>Circles keep close friends, family, teammates, and collaborators easy to find.</p></div>
+      </article>
+      <article class="principle">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><h3>Calm by design</h3><p>Clear choices and thoughtful pacing put you in charge of your attention.</p></div>
+      </article>
+      <article class="principle">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8zM8 10h8M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><h3>Conversation over counts</h3><p>Posts are built to invite a response, not turn connection into a scoreboard.</p></div>
+      </article>
+    </section>
+
+    <section class="experience" id="experience">
+      <div class="experience-grid wrap">
+        <div>
+          <span class="section-index">02 / The experience</span>
+          <h2>Find your rhythm in three simple moves.</h2>
+          <div class="steps">
+            <article class="step"><div class="step-number">1</div><div><h3>Choose your circles</h3><p>Organize connections around the parts of life that matter to you.</p></div></article>
+            <article class="step"><div class="step-number">2</div><div><h3>Tune your home</h3><p>Move between close friends, favorite interests, and wider discovery.</p></div></article>
+            <article class="step"><div class="step-number">3</div><div><h3>Join in naturally</h3><p>Reply, gather, or simply catch up—without pressure to perform.</p></div></article>
+          </div>
+        </div>
+        <div class="topic-board" aria-label="Example interest circles">
+          <div class="topic-head"><h3>Your circles</h3><div class="pulse" aria-hidden="true"><span></span><span></span><span></span></div></div>
+          <div class="topic-list">
+            <div class="topic"><div class="topic-badge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 20h18L15 8l-4 6-2-3-6 9zM16 5a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Weekend outside</strong><small>Trails, parks, and fresh-air plans</small></div><svg class="topic-arrow" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="topic"><div class="topic-badge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19h16M6 16l3-8 3 5 3-10 3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Making things</strong><small>Sketches, builds, and works in progress</small></div><svg class="topic-arrow" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="topic"><div class="topic-badge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 11l9-7 9 7M5 10v10h14V10M9 20v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Close to home</strong><small>Neighbors, local finds, and shared help</small></div><svg class="topic-arrow" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="topic"><div class="topic-badge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18h16M6 18V9l6-4 6 4v9M9 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Ideas worth sharing</strong><small>Big questions and thoughtful conversation</small></div><svg class="topic-arrow" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final wrap" id="concept">
+      <div class="final-card">
+        <div><h2>Make room for the people who make life interesting.</h2><p>A bright, welcoming foundation for a social network centered on genuine connection.</p></div>
+        <a class="primary" href="#main">Back to the beginning
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-row wrap"><span>A social network concept focused on healthier connection.</span><a href="#main">Return to top</a></div>
+  </footer>
+</body>
+</html>
